@@ -1,0 +1,7 @@
+{
+  "semi": true,
+  "singleQuote": false,
+  "trailingComma": "all",
+  "tailwindStylesheet": "./app/globals.css",
+  "plugins": ["prettier-plugin-tailwindcss"]
+}
