@@ -65,12 +65,7 @@
 - `.git` 자동 초기화됨, `AGENTS.md`/`CLAUDE.md` 파일이 create-next-app 기본 생성물로 함께 생성됨 (최근 Next.js가 AI 코딩 에이전트 사용을 염두에 두고 기본 제공하는 것으로 추정)
 - `npm run dev` 정상 작동 확인 완료
 
-## 10. Claude Code로의 전환 논의
-
-- "이 대화를 VSCode로 옮길 수 있나?" 질문 → 대화 자체는 이전 불가하지만, **Claude Code(VSCode 확장)**를 통해 에디터 안에서 직접 파일 작업 가능하다는 점 안내
-- 컨텍스트 전달 방법: 대화 요약을 자동으로 넘기는 기능은 없고, **`CLAUDE.md` 파일이 Claude Code가 자동으로 읽는 컨텍스트 저장소** 역할을 함
-
-## 11. CLAUDE.md 작성
+## 10. CLAUDE.md 작성
 
 잘 쓰는 방법 논의 후 아래 내용으로 최종 확정:
 
@@ -79,7 +74,7 @@
 - 코딩 컨벤션(함수형 컴포넌트+TS, Tailwind만 사용, kebab-case 파일명)
 - 하지 말아야 할 것(`output: 'export'` 금지, `unoptimized` 이미지 옵션 금지, 임의 패키지 추가 금지)
 
-## 12. 유사 프로젝트 벤치마킹
+## 11. 유사 프로젝트 벤치마킹
 
 velite 스키마 설계 전, 유사한 개발 블로그 두 곳의 실제 코드를 조사함.
 
@@ -98,9 +93,9 @@ velite 스키마 설계 전, 유사한 개발 블로그 두 곳의 실제 코드
   title/description에 `max(99)` 글자 수 제한을 스키마 레벨에서 강제.
 
 두 저장소의 아이디어를 바로 반영하지는 않고, `CLAUDE.md`에 "장기 참고 아이디어"
-섹션으로 정리해 나중에 검토하기로 함 (아래 13번 참고).
+섹션으로 정리해 나중에 검토하기로 함 (아래 12번 참고).
 
-## 13. CLAUDE.md — 장기 참고 아이디어 섹션 추가
+## 12. CLAUDE.md — 장기 참고 아이디어 섹션 추가
 
 벤치마킹한 두 저장소에서 나온 아이디어를 즉시 반영하지 않고, `CLAUDE.md`에
 체크리스트 형태의 "장기 참고 아이디어" 섹션으로 추가하기로 함. 카테고리:
@@ -111,7 +106,7 @@ velite 스키마 설계 전, 유사한 개발 블로그 두 곳의 실제 코드
 - AI 에이전트 자동화 관련 (의존성 감사, 링크 검사, 배포 후 스모크 테스트 cron)
 - 기타 (댓글 — Giscus)
 
-## 14. Claude Code 협업 방식 조정 — 학습용 직접 작성으로 전환
+## 13. Claude Code 협업 방식 조정 — 학습용 직접 작성으로 전환
 
 - velite.config.ts / next.config.ts / 샘플 포스트를 Claude Code가 먼저 자동으로
   작성해서 진행했으나, 사용자가 "학습용 프로젝트라 직접 작성하고 싶다"는 이유로
@@ -121,14 +116,14 @@ velite 스키마 설계 전, 유사한 개발 블로그 두 곳의 실제 코드
 - 예외: 사용자가 명시적으로 "대신 써줘"라고 요청한 경우(예: 이번 CLAUDE.md /
   decisions-log.md 갱신)는 Claude Code가 직접 편집
 
-## 15. velite 스키마 최종 확정 및 next.config.ts 연동
+## 14. velite 스키마 최종 확정 및 next.config.ts 연동
 
 - **frontmatter 스키마 확정**: `title`, `description`, `date`(`s.isodate()`),
   `tags`(`s.array(s.string())`), `published`(`s.boolean()`, **기본값 false** —
   실수로 초안이 공개되는 것을 방지하기 위해 명시적 opt-in 방식 선택)
 - **slug 생성 방식 결정**: frontmatter에 별도로 안 쓰고 `s.path()` +
   `.transform()`으로 파일 경로 기반 자동 생성 (`content/posts/hello.mdx` →
-  `slug: "hello"`). 12번 항목에서 miryang.dev 벤치마킹으로 알게 된 방식을
+  `slug: "hello"`). 11번 항목에서 miryang.dev 벤치마킹으로 알게 된 방식을
   실제로 채택
 - **콘텐츠 위치**: `content/posts/**/*.mdx` (velite root 기본값이 `content/`이며,
   `app/` 디렉토리는 라우팅 전용이라 콘텐츠 데이터와 분리)
@@ -144,7 +139,7 @@ velite 스키마 설계 전, 유사한 개발 블로그 두 곳의 실제 코드
 - `npx velite build` 단독 실행으로 스키마 검증 → `content/posts/hello.mdx`
   샘플로 title/date/tags/slug/컴파일된 MDX body까지 정상 출력 확인 완료
 
-## 16. ESLint / Prettier 도입
+## 15. ESLint / Prettier 도입
 
 - ESLint는 create-next-app 기본값(`eslint-config-next`: core-web-vitals +
   typescript) 그대로 유지, **Prettier는 별도 패키지 추가가 필요해 CLAUDE.md
@@ -164,9 +159,9 @@ velite 스키마 설계 전, 유사한 개발 블로그 두 곳의 실제 코드
   등)은 사용자가 직접 정함. `singleQuote`는 JSX 속성 기본값(큰따옴표)과의
   일관성을 위해 `false`(기본값)로 결정
 
-## 17. CLAUDE.md 갱신
+## 16. CLAUDE.md 갱신
 
-15~16번 결정사항을 반영해 CLAUDE.md 갱신:
+14~15번 결정사항을 반영해 CLAUDE.md 갱신:
 
 - 기술 스택 섹션의 velite 항목에 콘텐츠 위치/스키마/slug 생성 방식/Turbopack
   유의사항 구체화, Prettier 항목 신규 추가
