@@ -25,8 +25,8 @@ export default async function PostPage({ params }: PostPageProps) {
   });
 
   return (
-    <article>
-      <h1>{post.title}</h1>
+    <article className="prose max-w-none py-8 prose-zinc">
+      <h1 className="font-semibold">{post.title}</h1>
       <MDXContent />
     </article>
   );
