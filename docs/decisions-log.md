@@ -209,7 +209,7 @@ Vercel 배포/GitHub Actions는 뒤로 미루고, UI/기능 작업을 먼저 진
 - **컨셉**: 미니멀/기술 문서형(GitHub·Vercel 문서 사이트 계열)으로 결정.
   "GitHub와 동일한 느낌으로 가면 어떨지" 질문에 대해, **원칙(그레이스케일
   기반, 여백보다 보더/구분선 활용, 높은 정보 밀도)은 참고하되 색상 값·컴포넌트를
-  그대로 복제하지는 않기로 함** 
+  그대로 복제하지는 않기로 함**
 - **색상**: zinc 그레이스케일을 베이스로, 포인트 컬러는 blue 계열 1개만
   제한적으로 사용(링크·태그·hover 등). 여러 색을 섞지 않는 것이 원칙
 - **폰트**: 본문/제목은 **Pretendard**(한글 가독성, 국내 개발 블로그 표준급 —
@@ -224,6 +224,23 @@ Vercel 배포/GitHub Actions는 뒤로 미루고, UI/기능 작업을 먼저 진
   기능을 네이티브로 지원해 대부분 커버 가능. 복잡한 애니메이션/mixin이 꼭
   필요해지면 그때 이유와 함께 재검토
 
+## 20. 코드 하이라이팅 적용 (`rehype-pretty-code`)
+
+18번 2순위 작업. velite의 `defineConfig`에 `mdx.rehypePlugins` 옵션이 있는 걸
+확인하고(velite가 내부적으로 remark/rehype 파이프라인을 쓰기 때문), 여기에
+연결하는 방식으로 진행.
+
+- **설치**: `rehype-pretty-code`, `shiki`(내부적으로 Shiki 엔진을 사용해 VS
+  Code와 동일한 방식으로 하이라이팅) — 새 패키지 추가라 CLAUDE.md 정책상
+  사전 고지, 18번에서 이미 로드맵 2순위로 합의된 항목이라 바로 진행
+- **연동 위치**: `remarkPlugins`가 아니라 `rehypePlugins`. 코드 블록은 remark
+  단계(마크다운 파싱)가 아니라 rehype 단계(HTML 트리로 변환된 이후)에서
+  `<pre><code>`로 이미 구조화된 상태이므로, 토큰 단위 색칠 작업은 rehype
+  단계에서 처리하는 게 맞음
+- **옵션 형식**: `rehypePlugins: [[rehypePrettyCode, { theme: "github-dark" }]]`
+  — unified/rehype 생태계는 플러그인에 옵션을 줄 때 `[플러그인, 옵션]` 튜플로
+  등록. `theme`은 Shiki 내장 VS Code 테마 중 선택(우선 `github-dark`로 시작,
+  추후 zinc/blue 톤과 어울리는 테마로 교체 가능)
 ---
 
 ## 현재 진행 상태 (다음 할 일)
@@ -236,8 +253,8 @@ Vercel 배포/GitHub Actions는 뒤로 미루고, UI/기능 작업을 먼저 진
 - [x] velite 설정 (스키마 확정: title/date/description/tags/published, slug 자동 생성, next.config.ts 연동까지 완료)
 - [x] ESLint / Prettier 설정
 - [x] 포스트 목록/상세 페이지에 velite MDX 렌더링 연동
-- [ ] 최소 레이아웃/타이포그래피 적용 (다음 작업)
-- [ ] 코드 하이라이팅 (`rehype-pretty-code`)
-- [ ] 포스트 목록 개선 (태그 필터 UI)
+- [x] 최소 레이아웃/타이포그래피 적용
+- [x] 코드 하이라이팅 (`rehype-pretty-code`)
+- [ ] 포스트 목록 개선 (태그 필터 UI) (다음 작업)
 - [ ] Vercel 배포 연결 (UI/기능 작업 이후로 보류)
 - [ ] GitHub Actions 워크플로우 작성 (테스트, Dependabot, Claude Code Action)
