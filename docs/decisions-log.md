@@ -241,6 +241,19 @@ Vercel 배포/GitHub Actions는 뒤로 미루고, UI/기능 작업을 먼저 진
   — unified/rehype 생태계는 플러그인에 옵션을 줄 때 `[플러그인, 옵션]` 튜플로
   등록. `theme`은 Shiki 내장 VS Code 테마 중 선택(우선 `github-dark`로 시작,
   추후 zinc/blue 톤과 어울리는 테마로 교체 가능)
+
+## 21. 포스트 목록 태그 필터 UI
+
+18번 3순위 작업.
+
+- `app/page.tsx`에서 `searchParams`(`?tag=`)로 필터링. 발행글 전체의 `tags`를
+  모아 중복 제거한 목록을 태그 내비게이션으로 노출하고, 쿼리스트링과 일치하는
+  글만 필터링. 태그 목록을 하드코딩하지 않고 콘텐츠에서 동적으로 뽑아내는 방식
+- `params`(동적 라우트 세그먼트)뿐 아니라 `searchParams`(쿼리스트링)도 Next.js
+  16에서는 `Promise`로 넘어옴 → 페이지 컴포넌트를 `async`로 선언하고 `await`로
+  풀어서 사용. 요청마다 달라지는 값이라 빌드 타임에 확정 불가능하다는 점에서
+  `params`와 같은 이유
+
 ---
 
 ## 현재 진행 상태 (다음 할 일)
@@ -255,6 +268,6 @@ Vercel 배포/GitHub Actions는 뒤로 미루고, UI/기능 작업을 먼저 진
 - [x] 포스트 목록/상세 페이지에 velite MDX 렌더링 연동
 - [x] 최소 레이아웃/타이포그래피 적용
 - [x] 코드 하이라이팅 (`rehype-pretty-code`)
-- [ ] 포스트 목록 개선 (태그 필터 UI) (다음 작업)
+- [x] 포스트 목록 개선 (태그 필터 UI)
 - [ ] Vercel 배포 연결 (UI/기능 작업 이후로 보류)
 - [ ] GitHub Actions 워크플로우 작성 (테스트, Dependabot, Claude Code Action)
