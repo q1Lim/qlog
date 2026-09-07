@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import Header from "@/components/header";
 
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-jetbrains-mono",
@@ -23,7 +24,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css"
         />
       </head>
-      <body className="mx-auto flex min-h-full max-w-2xl flex-col px-4 font-sans">
+      <body className="mx-auto flex min-h-full max-w-4xl flex-col px-4 font-sans">
+        <Header />
         {children}
       </body>
     </html>

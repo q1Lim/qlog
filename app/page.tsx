@@ -26,7 +26,6 @@ export default async function Home({ searchParams }: HomeProps) {
 
   return (
     <main>
-      <h1>qlog</h1>
       <nav className="flex flex-wrap gap-2 py-4">
         <Link href="/" className={!tag ? "font-semibold text-accent" : ""}>
           전체
