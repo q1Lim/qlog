@@ -13,6 +13,7 @@ const posts = defineCollection({
       published: s.boolean().default(false),
       slug: s.path(),
       body: s.mdx(),
+      thumbnail: s.image().optional(),
     })
     .transform((data) => ({
       ...data,
