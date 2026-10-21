@@ -21,7 +21,7 @@ export default function PostListItem({ post }: PostListItemProps) {
       >
         <div className="flex min-w-0 flex-1 flex-col gap-2">
           <div className="text-xl font-semibold">{post.title}</div>
-          <p>{post.description}</p>
+          <p className="line-clamp-3">{post.description}</p>
           <div className="text-xs text-muted">{formatDate(post.date)}</div>
         </div>
         {
