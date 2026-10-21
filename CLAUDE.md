@@ -21,6 +21,10 @@
     `velite.build()`를 직접 실행하는 방식(번들러 무관)으로 연동함. 다른
     라이브러리를 webpack 플러그인 방식으로 붙이려 할 때도 같은 문제에
     부딪힐 수 있으니 유의
+  - `s.image()`로 frontmatter에서 이미지를 참조하면 velite가 빌드 시
+    `public/static/`에 해시가 붙은 파일을 자동 생성함 (`.velite/`와 동일한
+    성격의 빌드 산출물) → `.gitignore`에 `/public/static/` 추가해둠, 커밋
+    대상 아님
 - **TypeScript, Tailwind CSS, ESLint** — create-next-app 기본 설정 사용
 - **Prettier + `prettier-plugin-tailwindcss`** — ESLint와 역할 분리(포매팅 vs
   코드 품질)를 위해 별도 추가. Tailwind 클래스 순서 자동 정렬 목적으로 플러그인도
@@ -75,7 +79,9 @@
 
 ## velite / 콘텐츠 스키마 관련
 
-- [ ] `thumbnailUrl` 필드 추가 검토 (카드형 목록 UI를 쓰게 될 경우)
+- [x] 썸네일 필드 추가 — `thumbnail: s.image().optional()`로 구현 완료.
+      단, 카드형이 아니라 리스트형 UI에서 선택적으로 보여주는 용도로 사용 중
+      (카드형 전환은 보류)
 - [ ] `rehype-pretty-code`를 velite MDX 옵션에 직접 연결해 코드 하이라이팅 처리
       (별도 컴포넌트 구현 없이)
 - [ ] title/description 등에 `max()`로 글자 수 제한을 스키마 레벨에서 강제
