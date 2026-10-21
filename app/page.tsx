@@ -1,5 +1,6 @@
 import { posts } from "@/.velite";
 import Link from "next/link";
+import TagList from "@/components/tag-list";
 
 /*
   Home으로 접속 시 전체 포스트 목록 조회
@@ -16,30 +17,13 @@ export default async function Home({ searchParams }: HomeProps) {
     .filter((post) => post.published)
     .sort((a, b) => (a.date > b.date ? -1 : 1));
 
-  const tags = Array.from(
-    new Set(published.flatMap((post) => post.tags)),
-  ).sort();
-
   const filtered = (
     tag ? published.filter((post) => post.tags.includes(tag)) : published
   ).sort((a, b) => (a.date > b.date ? -1 : 1));
 
   return (
     <main>
-      <nav className="flex flex-wrap gap-2 py-4">
-        <Link href="/" className={!tag ? "font-semibold text-accent" : ""}>
-          전체
-        </Link>
-        {tags.map((t) => (
-          <Link
-            key={t}
-            href={`/?tag=${t}`}
-            className={tag === t ? "font-semibold text-accent" : ""}
-          >
-            #{t}
-          </Link>
-        ))}
-      </nav>
+      <TagList activeTag={tag} />
       <ul>
         {filtered.map((post) => (
           <li key={post.slug}>
