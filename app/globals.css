@@ -24,14 +24,44 @@ body {
   color: var(--foreground);
 }
 
-/* TODO: .prose code 스타일 더 다듬기 (배경색/패딩 등 디테일 조정) */
-.prose code {
+/* :not(pre code)로 코드 블록(rehype-pretty-code) 안의 code는 제외, 인라인 코드만 적용 */
+.prose code:not(pre code) {
   background-color: var(--border); /* 연한 회색 배경 */
   padding: 0.15em 0.4em;
   border-radius: 0.25rem;
   font-weight: 500;
 }
-.prose code::before,
-.prose code::after {
+.prose code:not(pre code)::before,
+.prose code:not(pre code)::after {
   content: none; /* 기본으로 붙는 백틱 장식 문자 제거 */
+}
+
+.prose blockquote {
+  border-left: 4px solid var(--accent);
+  background-color: #f4f4f5; /* zinc-100, 연한 회색 */
+  padding: 0.25rem 1rem;
+  border-radius: 0 0.25rem 0.25rem 0;
+  font-style: normal; /* 기본 이탤릭 제거 */
+  color: var(--foreground);
+}
+.prose blockquote p::before,
+.prose blockquote p::after {
+  content: none; /* 기본으로 붙는 큰따옴표 장식 문자 제거 */
+}
+
+.prose a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  font-weight: 500;
+}
+
+.prose li:has(> input[type="checkbox"]) {
+  list-style: none;
+  margin-left: -1.5em;
+}
+
+.prose ul > li::marker,
+.prose ol > li::marker {
+  color: #3f3f46; /* zinc-700, 진한 회색 */
 }
