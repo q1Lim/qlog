@@ -1,0 +1,24 @@
+name: Claude Code Review
+
+on:
+  pull_request:
+    types: [opened, reopened, ready_for_review]
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          prompt: |
+            이 PR을 리뷰하고 코멘트로 작성해줘. CLAUDE.md에 적힌 컨벤션을 참고해.
+            lint/타입 에러는 CI(lint-and-build)가 이미 검사하니 지적하지 말고,
+            로직 오류, 불필요한 중복, 주석-코드 불일치 같은 CI로 못 잡는 문제 위주로 봐줘.
+          claude_args: |
+            --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr diff:*),Bash(gh pr view:*)"

@@ -54,6 +54,13 @@
 - 컴포넌트는 함수형 + TypeScript, props는 interface로 명시
 - 스타일링은 Tailwind CSS만 사용 (별도 CSS 모듈 지양)
 - 파일명: kebab-case (예: post-list.tsx), 컴포넌트명: PascalCase
+- 변수/함수명: camelCase, 상수: UPPER_SNAKE_CASE, 타입/인터페이스: PascalCase
+- 여러 곳에서 재사용되는 함수는 `util/`에 분리
+- 매직 넘버는 의미 있는 이름의 상수로 선언하고, 값의 근거(왜 그 숫자인지,
+  다른 값과 연동돼 있다면 그 관계까지)를 주석으로 남길 것
+- 주석은 "무엇을 하는지"가 아니라 "왜 이렇게 했는지"(WHY) 위주로 작성,
+  코드 자체가 보여주는 내용은 중복해서 적지 않기. 주석 내용이 실제 코드
+  동작과 정확히 일치하는지 확인 (특히 조건문/가드 절)
 
 # 하지 말아야 할 것
 
@@ -82,8 +89,9 @@
 - [x] 썸네일 필드 추가 — `thumbnail: s.image().optional()`로 구현 완료.
       단, 카드형이 아니라 리스트형 UI에서 선택적으로 보여주는 용도로 사용 중
       (카드형 전환은 보류)
-- [ ] `rehype-pretty-code`를 velite MDX 옵션에 직접 연결해 코드 하이라이팅 처리
-      (별도 컴포넌트 구현 없이)
+- [x] `rehype-pretty-code`를 velite MDX 옵션에 직접 연결해 코드 하이라이팅 처리
+      (별도 컴포넌트 구현 없이) — `velite.config.ts`의 `mdx.rehypePlugins`에
+      연동 완료
 - [ ] title/description 등에 `max()`로 글자 수 제한을 스키마 레벨에서 강제
       (SEO 메타 태그 길이 관리 목적)
 
