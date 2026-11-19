@@ -15,6 +15,12 @@ function flattenToc(items: Post["toc"]): string[] {
   ]);
 }
 
+/*
+    헤딩이 화면 맨 위에서 이 거리(px) 안이면 "지나쳤다"고 판단하는 기준
+    -> atBottom으로 페이지 끝에 도달한 걸 확인한 뒤, 그중 어떤 헤딩이 지금 활성화 대상인지 고를 때 사용
+*/
+const NEAR_TOP_PX = 20;
+
 export default function Toc({ toc }: TocProps) {
   const [activeId, setActiveId] = useState<string | null>(null);
 
@@ -43,38 +49,35 @@ export default function Toc({ toc }: TocProps) {
           setActiveId(visibleInOrder[visibleInOrder.length - 1]);
         }
       },
-      // 뷰포트 아래쪽 80%를 잘라내서, 화면 상단 20% 영역만 감지 범위로 삼음
+      // 화면 상단 20%만 감지 영역으로 삼기 위해, 뷰포트 아래쪽 80%를 잘라냄
       { rootMargin: "0px 0px -80% 0px" },
     );
 
     elements.forEach((el) => observer.observe(el));
 
-    // 문서 끝에 가까운 헤딩들은 "상단 20%"까지 스크롤할 여유가 부족해서
-    // IntersectionObserver가 영영 트리거 안 될 수 있음 → 페이지 맨 끝 근처에서는 작은 버퍼(20px)로 직접 위치를 비교해서, 서로 가까이 붙은 헤딩들도 제대로 구분해서 활성화
+    /*
+        페이지 끝 근처에서 activeId를 다시 한번 보정하는 함수
+        IntersectionObserver만으로는 문서 끝에 가까운 헤딩들이 화면 상단 20% 지점까지 스크롤할 여유가 부족해 영영 트리거 안 될 수 있어서, NEAR_TOP_PX 버퍼로 직접 위치를 비교해 보완함
+    */
     function refineActiveNearBottom() {
+      const canScroll = document.body.scrollHeight > window.innerHeight;
+      // 스크롤 가능한 문서에서 더 이상 스크롤할 수 없는 바닥에 도달했는지 판단
       const atBottom =
+        canScroll &&
         window.innerHeight + window.scrollY >= document.body.scrollHeight - 10;
 
       if (!atBottom) return;
 
-      const passedIds = elements
-        .filter(
-          (el) =>
-            el.getBoundingClientRect().top + window.scrollY <=
-            window.scrollY + 20,
-        )
-        .map((el) => el.id);
+      const lastPassed = elements
+        .filter((el) => el.getBoundingClientRect().top <= NEAR_TOP_PX)
+        .at(-1)?.id;
 
-      const lastPassed = ids.filter((id) => passedIds.includes(id)).at(-1);
-
-      if (lastPassed) {
-        setActiveId(lastPassed);
-      } else if (ids.length > 0) {
-        setActiveId(ids[ids.length - 1]);
-      }
+      setActiveId(lastPassed ?? ids[ids.length - 1]);
     }
 
-    window.addEventListener("scroll", refineActiveNearBottom);
+    window.addEventListener("scroll", refineActiveNearBottom, {
+      passive: true,
+    });
 
     return () => {
       observer.disconnect();
