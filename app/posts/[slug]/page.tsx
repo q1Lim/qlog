@@ -1,4 +1,6 @@
 import { posts } from "@/.velite";
+import Toc from "@/components/toc";
+import { formatDate } from "@/util/format";
 import { run } from "@mdx-js/mdx";
 import { notFound } from "next/navigation";
 import * as runtime from "react/jsx-runtime";
@@ -25,9 +27,15 @@ export default async function PostPage({ params }: PostPageProps) {
   });
 
   return (
-    <article className="prose max-w-none py-8 prose-zinc">
-      <h1 className="font-semibold">{post.title}</h1>
-      <MDXContent />
-    </article>
+    <>
+      <Toc toc={post.toc} />
+      <article className="prose max-w-none py-8 prose-zinc">
+        <h1 className="font-semibold">{post.title}</h1>
+        <div className="flex justify-end pb-2 text-sm text-muted">
+          {formatDate(post.date)}
+        </div>
+        <MDXContent />
+      </article>
+    </>
   );
 }

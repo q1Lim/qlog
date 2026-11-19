@@ -1,5 +1,5 @@
 import { Post } from "@/.velite";
-import formatDate from "@/util/format";
+import { formatDate } from "@/util/format";
 import Link from "next/link";
 import Image from "next/image";
 
