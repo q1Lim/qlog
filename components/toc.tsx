@@ -111,6 +111,11 @@ export default function Toc({ toc }: TocProps) {
     );
   }
 
+  // 헤딩이 없는 글이면 내용 없는 border-l 선만 떠있게 되어 없을 경우 null 처리
+  if (toc.length === 0) return null;
+
+  // right 계산의 56rem은 app/layout.tsx의 body에 있는 max-w-4xl(본문 폭)과, 15rem은 바로 아래 w-60(이 nav 자체의 폭)과 값이 맞물려 있음 — 둘 중 하나라도 바뀌면 이 계산도 같이 고쳐야 TOC가 본문과 안 겹침
+  // (100vw는 세로 스크롤바 폭도 포함하는데, 그로 인한 오차는 스크롤바 폭의 절반 수준(보통 7~8px)이라 장식용 TOC 위치에선 무시함)
   return (
     <nav className="fixed top-32 right-[calc((100vw-56rem)/2-15rem)] hidden w-60 border-l border-border pl-4 text-sm xl:block">
       {renderItems(toc)}
