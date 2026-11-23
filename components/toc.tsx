@@ -15,6 +15,13 @@ function flattenToc(items: Post["toc"]): string[] {
   ]);
 }
 
+/*
+    헤딩이 화면 상단에서 이 거리(px)만큼의 선을 이미 지났는지(음수 포함) 판단하는 기준
+    -> atBottom으로 페이지 끝에 도달한 걸 확인한 뒤, 그중 어떤 헤딩이 지금 활성화 대상인지 고를 때 사용
+    (rootMargin과 무관)
+*/
+const NEAR_TOP_PX = 20;
+
 export default function Toc({ toc }: TocProps) {
   const [activeId, setActiveId] = useState<string | null>(null);
 
@@ -43,38 +50,44 @@ export default function Toc({ toc }: TocProps) {
           setActiveId(visibleInOrder[visibleInOrder.length - 1]);
         }
       },
-      // 뷰포트 아래쪽 80%를 잘라내서, 화면 상단 20% 영역만 감지 범위로 삼음
+      // 화면 상단 20%만 감지 영역으로 삼기 위해, 뷰포트 아래쪽 80%를 잘라냄
       { rootMargin: "0px 0px -80% 0px" },
     );
 
     elements.forEach((el) => observer.observe(el));
 
-    // 문서 끝에 가까운 헤딩들은 "상단 20%"까지 스크롤할 여유가 부족해서
-    // IntersectionObserver가 영영 트리거 안 될 수 있음 → 페이지 맨 끝 근처에서는 작은 버퍼(20px)로 직접 위치를 비교해서, 서로 가까이 붙은 헤딩들도 제대로 구분해서 활성화
+    /*
+        페이지 끝 근처에서 activeId를 다시 한번 보정하는 함수
+        IntersectionObserver만으로는 문서 끝에 가까운 헤딩들이 화면 상단 20% 지점까지 스크롤할 여유가 부족해 영영 트리거 안 될 수 있어서, NEAR_TOP_PX 버퍼로 직접 위치를 비교해 보완함
+    */
     function refineActiveNearBottom() {
+      // 짧은 글(스크롤 불가능)에서는 모바일 elastic bounce 등으로 scroll 이벤트가 드물게 발생해도 atBottom이 항상 참이 되어버려 엉뚱한 헤딩이 활성화되므로, 이 가드로 그 오탐을 막음
+      const canScroll = document.body.scrollHeight > window.innerHeight;
+
+      // 스크롤 가능한 문서에서 더 이상 스크롤할 수 없는 바닥에 도달했는지 판단
       const atBottom =
+        canScroll &&
         window.innerHeight + window.scrollY >= document.body.scrollHeight - 10;
 
       if (!atBottom) return;
 
-      const passedIds = elements
-        .filter(
-          (el) =>
-            el.getBoundingClientRect().top + window.scrollY <=
-            window.scrollY + 20,
-        )
-        .map((el) => el.id);
+      const lastPassed = elements
+        .filter((el) => el.getBoundingClientRect().top <= NEAR_TOP_PX)
+        .at(-1)?.id;
 
-      const lastPassed = ids.filter((id) => passedIds.includes(id)).at(-1);
+      // lastPassed와 기준을 맞추기 위해 fallback도 elements(DOM에 실제 존재하는 헤딩) 기준으로 사용 — ids 기준이면 DOM에 없는 id가 뽑힐 수 있음
+      const lastElementId = elements.at(-1)?.id ?? null;
 
       if (lastPassed) {
         setActiveId(lastPassed);
-      } else if (ids.length > 0) {
-        setActiveId(ids[ids.length - 1]);
+      } else {
+        setActiveId(lastElementId);
       }
     }
 
-    window.addEventListener("scroll", refineActiveNearBottom);
+    window.addEventListener("scroll", refineActiveNearBottom, {
+      passive: true,
+    });
 
     return () => {
       observer.disconnect();
@@ -108,8 +121,15 @@ export default function Toc({ toc }: TocProps) {
     );
   }
 
+  // 헤딩이 없는 글이면 내용 없는 border-l 선만 떠있게 되어 없을 경우 null 처리
+  if (toc.length === 0) return null;
+
+  /*
+    right 계산과 표시 breakpoint(min-[86rem]) 둘 다 56rem(max-w-4xl, app/layout.tsx)과 15rem(w-60) 값에 묶여 있음
+    이 셋 중 하나라도 바꾸면 TOC가 본문과 겹치거나 화면 밖으로 잘릴 수 있어 같이 고쳐야 함
+  */
   return (
-    <nav className="fixed top-32 right-[calc((100vw-56rem)/2-15rem)] hidden w-60 border-l border-border pl-4 text-sm xl:block">
+    <nav className="fixed top-32 right-[calc((100vw-56rem)/2-15rem)] hidden w-60 border-l border-border pl-4 text-sm min-[86rem]:block">
       {renderItems(toc)}
     </nav>
   );
